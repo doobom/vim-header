@@ -40,7 +40,9 @@ endif
 if !exists('g:header_alignment')
     let g:header_alignment = 1
 endif
-
+if !exists('g:header_markdown_extra')
+    let g:header_markdown_extra = 1
+endif
 " Path for license files directory
 let s:license_files_dir = expand('<sfile>:p:h:h').'/licensefiles/'
 
@@ -65,6 +67,10 @@ fun s:set_props()
     let b:field_date = 'Date'
     let b:field_modified_date = 'Last Modified Date'
     let b:field_modified_by = 'Last Modified By'
+    let b:field_category = 'Category'
+    let b:field_tags = 'Tags'
+    let b:field_slug = 'Slug'
+    let b:field_summary = 'Summary'
     let b:field_separator = ':'
 
     " Setting Values for Languages
@@ -213,6 +219,10 @@ fun s:set_props()
     elseif b:filetype == 'markdown'
         let b:block_comment = 1
         let b:comment_begin = '```'
+        if g:header_markdown_extra == 1
+            let b:field_file = 'Title'
+            let b:field_modified_date = 'Modified'
+        endif
         let b:comment_end = '```'
     else
         let b:is_filetype_available = 0
@@ -284,10 +294,15 @@ fun s:add_header()
       let i += 1
     endif
     if g:header_field_filename
-        if g:header_field_filename_path
-            call append(i, b:comment_char . b:field_file . ' ' . expand('%s:t'))
+        if g:header_markdown_extra
+            " replace '-' to space, and connver first letter to uppercase
+            call append(i, b:comment_char . b:field_file . ' ' . substitute(substitute(split(expand('%:r'),'/')[-1], '-', ' ', 'g'), '\<.', '\U&', 'g'))
         else
-            call append(i, b:comment_char . b:field_file . ' ' . split(expand('%s:t'),'/')[-1])
+            if g:header_field_filename_path
+                call append(i, b:comment_char . b:field_file . ' ' . expand('%s:t'))
+            else
+                call append(i, b:comment_char . b:field_file . ' ' . split(expand('%s:t'),'/')[-1])
+            endif
         endif
         let i += 1
     endif
@@ -321,7 +336,15 @@ fun s:add_header()
         call append(i, b:comment_char . b:field_modified_by . ' ' . g:header_field_author . email)
         let i += 1
     endif
-
+    " markdown extra
+    if g:header_markdown_extra
+        call append(i, b:comment_char . b:field_category . ' ' . '<miss>')
+        call append(i+1, b:comment_char . b:field_tags . ' ' . '<tags>')
+        " replace space to - , and connver to lowercase
+        call append(i+2, b:comment_char . b:field_slug . ' ' . substitute(substitute(split(expand('%:r'),'/')[-1], ' ', '-', 'g'), '.', '\L&', 'g'))
+        call append(i+3, b:comment_char . b:field_summary . ' ' . '<summary>')
+        let i += 4
+    endif
     " If filetype supports block comment, close comment
     if b:block_comment
         call append(i, b:comment_end)
@@ -581,6 +604,12 @@ fun s:get_user_headers()
     if g:header_field_modified_by
         call add(headers_fields, b:field_modified_by)
     endif
+    if g:header_markdown_extra
+        call add(headers_fields, b:field_category)
+        call add(headers_fields, b:field_tags)
+        call add(headers_fields, b:field_slug)
+        call add(headers_fields, b:field_summary)
+    endif
 
     return l:headers_fields
 endfun
@@ -656,6 +685,34 @@ fun s:update_fields(longer_header_length)
                 \ s:align_field_with_spaces(b:field_modified_by, a:longer_header_length)
         endif
         let b:field_modified_by = b:field_modified_by . b:field_separator
+    endif
+    if match(b:user_headers, b:field_category) != -1
+        if g:header_alignment
+            let b:field_category =
+                \ s:align_field_with_spaces(b:field_category, a:longer_header_length)
+        endif
+        let b:field_category = b:field_category . b:field_separator
+    endif
+    if match(b:user_headers, b:field_tags) != -1
+        if g:header_alignment
+            let b:field_tags =
+                \ s:align_field_with_spaces(b:field_tags, a:longer_header_length)
+        endif
+        let b:field_tags = b:field_tags . b:field_separator
+    endif
+    if match(b:user_headers, b:field_slug) != -1
+        if g:header_alignment
+            let b:field_slug =
+                \ s:align_field_with_spaces(b:field_slug, a:longer_header_length)
+        endif
+        let b:field_slug = b:field_slug . b:field_separator
+    endif
+    if match(b:user_headers, b:field_summary) != -1
+        if g:header_alignment
+            let b:field_summary =
+                \ s:align_field_with_spaces(b:field_summary, a:longer_header_length)
+        endif
+        let b:field_summary = b:field_summary . b:field_separator
     endif
 endfun
 
