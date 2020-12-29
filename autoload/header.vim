@@ -59,7 +59,12 @@ fun s:set_props()
     let b:block_comment = 0 " If file type has block comment support
     let b:min_comment_begin = '' " If file type has a special char for minified versions
     let b:comment_char = '' " Comment char, or for block comment trailing char of body
-    let b:auto_space_after_char = 1 " Put auto space after comment char, if line is not empty
+    if g:align_with_spaces
+    	let b:auto_space_after_char = 1 " Put auto space after comment char, if line is not empty
+    else
+    	let b:auto_space_after_char = 0 " Put auto space after comment char, if line is not empty
+    endif
+    
     " Field placeholders according to doc comment syntax, if available
     let b:field_file = 'File'
     let b:field_license_id = 'License'
@@ -640,7 +645,7 @@ endfun
 fun s:update_fields(longer_header_length)
 
     if match(b:user_headers, b:field_file) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_file =
                 \ s:align_field_with_spaces(b:field_file, a:longer_header_length)
         endif
@@ -648,7 +653,7 @@ fun s:update_fields(longer_header_length)
     endif
 
     if match(b:user_headers, b:field_license_id) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_license_id =
                 \ s:align_field_with_spaces(b:field_license_id, a:longer_header_length)
         endif
@@ -656,7 +661,7 @@ fun s:update_fields(longer_header_length)
     endif
 
     if match(b:user_headers, b:field_author) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_author =
                 \ s:align_field_with_spaces(b:field_author, a:longer_header_length)
         endif
@@ -664,7 +669,7 @@ fun s:update_fields(longer_header_length)
     endif
 
     if match(b:user_headers, b:field_date) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_date =
                 \ s:align_field_with_spaces(b:field_date, a:longer_header_length)
         endif
@@ -672,7 +677,7 @@ fun s:update_fields(longer_header_length)
     endif
 
     if match(b:user_headers, b:field_modified_date) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_modified_date =
                 \ s:align_field_with_spaces(b:field_modified_date, a:longer_header_length)
         endif
@@ -680,35 +685,35 @@ fun s:update_fields(longer_header_length)
     endif
 
     if match(b:user_headers, b:field_modified_by) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_modified_by =
                 \ s:align_field_with_spaces(b:field_modified_by, a:longer_header_length)
         endif
         let b:field_modified_by = b:field_modified_by . b:field_separator
     endif
     if match(b:user_headers, b:field_category) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_category =
                 \ s:align_field_with_spaces(b:field_category, a:longer_header_length)
         endif
         let b:field_category = b:field_category . b:field_separator
     endif
     if match(b:user_headers, b:field_tags) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_tags =
                 \ s:align_field_with_spaces(b:field_tags, a:longer_header_length)
         endif
         let b:field_tags = b:field_tags . b:field_separator
     endif
     if match(b:user_headers, b:field_slug) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_slug =
                 \ s:align_field_with_spaces(b:field_slug, a:longer_header_length)
         endif
         let b:field_slug = b:field_slug . b:field_separator
     endif
     if match(b:user_headers, b:field_summary) != -1
-        if g:header_alignment
+        if g:header_alignment && g:align_with_spaces
             let b:field_summary =
                 \ s:align_field_with_spaces(b:field_summary, a:longer_header_length)
         endif
