@@ -64,7 +64,7 @@ fun s:set_props()
     else
     	let b:auto_space_after_char = 0 " Put auto space after comment char, if line is not empty
     endif
-    
+
     " Field placeholders according to doc comment syntax, if available
     let b:field_file = 'File'
     let b:field_license_id = 'License'
@@ -224,11 +224,13 @@ fun s:set_props()
     elseif b:filetype == 'markdown'
         let b:block_comment = 1
         let b:comment_begin = '```'
+        let b:comment_end = '```'
         if g:header_markdown_extra == 1
             let b:field_file = 'Title'
             let b:field_modified_date = 'Modified'
+            let b:comment_begin = '---'
+            let b:comment_end = '---'
         endif
-        let b:comment_end = '```'
     else
         let b:is_filetype_available = 0
     endif
